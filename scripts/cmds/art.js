@@ -4,7 +4,7 @@ const { createCanvas, loadImage } = require("canvas");
 
 module.exports = {
 	config: {
-		name: "art",
+		name: "art3",
 		version: "1.1",
 		author: "NTKhang",
 		countDown: 7,
