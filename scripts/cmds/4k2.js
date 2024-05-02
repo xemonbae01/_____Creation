@@ -1,54 +1,58 @@
+const fs = require("fs");
+const path = require("path");
+const axios = require("axios");
+const tinyurl = require('tinyurl');
+
 module.exports = {
   config: {
-    name: "enchance",
-    version: "0.0.1",
-    author: "DC-Nam",
-    description: {
-      en: "Increase image quality to 4K",
-    },
-    commandCategory: {
-      en: "Images",
-    },
-    usage: "[image]",
-    cooldowns: 3,
-  },
-
-  langs: {
-    en: {
-      replyPhoto: "Please reply with 1 photo!",
-      increaseResolution: "Increasing the resolution for {count} image(s) ({time}s)",
-      successful: "Successful ({time}s)",
-    },
-  },
-
-  onStart: async function ({ api, event, getLang }) {
-    let send = (msg) => api.sendMessage(msg, event.threadID, event.messageID);
-
-    if (event.type != "message_reply") return send(getLang("replyPhoto"));
-
-    send(getLang("increaseResolution", { count: event.messageReply.attachments.length, time: event.messageReply.attachments.length * 3 }));
-
-    let stream = [];
-    let exec_time = 0;
-
-    for (let i of event.messageReply.attachments) {
-      try {
-        let res = await require("axios").get(encodeURI(`https://nams.live/upscale.png?{"image":"${i.url}","model":"4x-UltraSharp"}`), {
-          responseType: "stream",
-        });
-
-        exec_time += +res.headers.exec_time;
-        const eta = (res.headers.exec_time / 1000) << 0;
-
-        res.data.path = "tmp.png";
-        stream.push(res.data);
-      } catch (e) {}
+    name: "4k",
+    aliases: [],
+    version: "1.0",
+    author: "Vex_kshitiz",
+    countDown: 20,
+    role: 2,
+    shortDescription: "upscale image to 4k",
+    longDescription: "upscale image to 4k",
+    category: "image",
+    guide: {
+      en: "{p}4k (reply to an image)",
     }
-
-    send({
-      body: getLang("successful", { time: (exec_time / 1000) << 0 }),
-      attachment: stream,
-    });
   },
+
+  onStart: async function ({ message, event, api }) {
+    api.setMessageReaction("🕐", event.messageID, (err) => {}, true);
+    const { type: a, messageReply: b } = event;
+    const { attachments: c, threadID: d, messageID: e } = b || {};
+
+    if (a === "message_reply" && c) {
+      const [f] = c;
+      const { url: g, type: h } = f || {};
+
+      if (!f || !["photo", "sticker"].includes(h)) {
+        return message.reply("❌ | reply to image by cmdName");
+      }
+
+      try {
+        const response = await axios.get("http://server.gamehosting.vn:25755/taoanhdep/lamnetanh?url=" + encodeURIComponent(g));
+        const imageUrl = response.data.data;
+
+        const imageResponse = await axios.get(imageUrl, { responseType: "arraybuffer" });
+
+        const savePath = path.join(__dirname, "cache");
+        if (!fs.existsSync(savePath)) {
+          fs.mkdirSync(savePath, { recursive: true });
+        }
+
+        const imagePath = path.join(savePath, "lado.png");
+        fs.writeFileSync(imagePath, Buffer.from(imageResponse.data));
+
+        message.reply({ attachment: fs.createReadStream(imagePath) });
+      } catch (error) {
+        console.error(error);
+        message.reply("❌ | api error");
+      }
+    } else {
+      message.reply("❌ | erro");
+    }
+  }
 };
-        
