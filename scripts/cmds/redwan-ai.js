@@ -16,7 +16,7 @@ module.exports.run = async function({ api, event, args }) {
     let tid = threadID,
     mid = messageID;
     const content = encodeURIComponent(args.join(" "));
-    if (!args[0]) return api.sendMessage("📫 | Please provide your question", tid, mid); api.sendMessage("🔍 | Llma is Searching Just Please Wait...", tid, mid);
+    if (!args[0]) return api.sendMessage("📫 | Please provide your question", tid, mid); api.sendMessage("🔍 | Max is Searching Just Please Wait...", tid, mid);
     try {
         const res = await axios.get(`https://api.kenliejugarap.com/Llama2/?text=${content}`);
         const respond = res.data.response;
