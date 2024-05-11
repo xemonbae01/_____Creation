@@ -79,7 +79,7 @@ module.exports = {
 			return message.reply(getLang("errorGetCharacter", err.error, err.message));
 		}
 
-		const endpoint = https://goatbotserver.onrender.com/taoanhdep/avataranime;
+		const endpoint = `https://goatbotserver.onrender.com/taoanhdep/avataranime`;
 		const params = {
 			id: idNhanVat,
 			chu_Nen,
