@@ -3,7 +3,7 @@ module.exports = {
     name: "help",
     aliases: [`h`],
     version: "1.0",
-    author: "Red Wan🍒",
+    author: "Red Wan☠️",
     countDown: 0,
     category: "config",
     role: 0,
